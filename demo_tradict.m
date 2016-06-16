@@ -132,7 +132,7 @@ disp('Avg. PCC for transcriptional programs:');
 disp(corr(tsa(:), psa(:)));
 
 % Avg. PCC for genes
-disp('Avg. PCC for g:');
+disp('Avg. PCC for genes:');
 disp(corr(tza(:), pza(:)));
 
 
