@@ -14,8 +14,7 @@
 % - sids is a 2597 samples cell array of sample ids.
 %
 % Change the below file path as needed.
-% The file can be obtained from: 
-% https://drive.google.com/file/d/0B252lj6tAx8XV0VCVFNfZXI5WVk/view?usp=sharing
+% This (large) file is available upon request:
 load /Users/sbiswas/GitHub/data/transcriptome_compression/Athaliana/NCBI_SRA_Athaliana_full_data_up_to_06Sept2015_quality_filtered_public.mat
 
 % Load the gene sets defining the transcriptional programs.
