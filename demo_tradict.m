@@ -122,15 +122,17 @@ tsa = standardize(subadjust(s, qt.Submission(~ktrain)));
 psa = standardize(subadjust(s_hat, qt.Submission(~ktrain)));
 
 % tza and pza are test-set true and predicted, respectively, intra-submission 
-% adjusted expression values for the genes. These are test_samples x genes 
+% adjusted log TPM expression values for the genes. These are test_samples x genes 
 % matrices.
 tza = standardize(subadjust(z, qt.Submission(~ktrain)));
 pza = standardize(subadjust(z_hat, qt.Submission(~ktrain)));
 
 % Avg. PCC for transcriptional programs
+disp('Avg. PCC for transcriptional programs:');
 disp(corr(tsa(:), psa(:)));
 
 % Avg. PCC for genes
+disp('Avg. PCC for g:');
 disp(corr(tza(:), pza(:)));
 
 
