@@ -18,7 +18,10 @@ Here we provide a general description of the interface met by `tradict_train` an
 ### Training
 Training a Tradict model requires 4 inputs:
 
-1. A training-samples x genes expression matrix of training transcriptomes. The units of this matrix should be 'total number of measured transcripts'.
+1. A #-training-samples x #-genes expression matrix of training transcriptomes. The units of this matrix should be 'total number of measured transcripts'.
+2. A #-training-samples x 1 vector of sequencing depths for each training sample.
+3. A #-genes x 1 vector of gene or transcript IDs. 
+4. A #-transcriptional-programs sized set of gene sets, each of which define the constituent members of a transcriptional program of interest. For example, for a given transcriptional program, the corresponding gene set will specify all gene/transcript IDs of the members contained within that program.
 
 
 ## References
