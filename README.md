@@ -13,8 +13,11 @@ Tradict has two modes of usage. The first is **training**, in which the transcri
 ## Usage
 Here we provide a general description of the interface met by `tradict_train` and `tradict_predict`, the training and prediction functions of Tradict. Tradict is currently implemented in MATLAB, but we are working on a R package to make Tradict more accessible and open source. In the MATLAB terminal type, `help tradict_train.m` and `help tradict_predict.m` to see exact usage details. 
 
-### Training
+`demo_tradict.m` provides a full scale example of how to run Tradict. Users can refer to this template of commands to perform their own analyses. 
 
+### Training
+Training a Tradict model requires 4 inputs:
+1. A training-samples x genes expression matrix of training transcriptomes. The units of this matrix should be 'total number of measured transcripts'.
 
 
 ## References
