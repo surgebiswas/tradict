@@ -1,5 +1,21 @@
-function [ s_hat, t_hat, z_hat ] = tradict_predict( t_m, o, model, varargin )
+function [ s_hat, t_hat, z_hat ] = tradict_predict( T_m, o, model, varargin )
+% [ s_hat, t_hat, z_hat ] = tradict_predict( T_m, o, model, varargin )
+% 
+% Description: Uses the expression measurements of the selected marker genes, 
+% to formulate predictions of the expression of transcriptional programs and
+% the remaining non-marker genes.
+%
+% INPUT
+% T_m =     [n-samples x m-marker-genes] matrix of measured expression values 
+%           for the selected markers.
+% o =       [n-samples x 1] vector of sequencing depths (in millions of reads)
+%           associated with each sample.
+% model =   model object output from tradict_train.m.
 
+
+
+    t_m = T_m; clear T_m;
+    
     ldiag = setParam(varargin, 'learn_latent_diag', false);
 
     % First learn the marker latent abundances.
