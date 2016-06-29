@@ -1,5 +1,5 @@
 function model = tradict_train( T, o, tids, sets, varargin )
-% model = tradict_train( t, o, tids, sets, varargin )
+% model = tradict_train( T, o, tids, sets, varargin )
 % 
 % Description: Trains a tradict model.
 % 
