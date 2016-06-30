@@ -11,7 +11,15 @@ function [ s_hat, t_hat, z_hat ] = tradict_predict( T_m, o, model, varargin )
 % o =       [n-samples x 1] vector of sequencing depths (in millions of reads)
 %           associated with each sample.
 % model =   model object output from tradict_train.m.
-
+%
+% OUTPUT
+% s_hat =   [n-samples x s-transcriptional-programs] matrix of predicted 
+%           expression values of the transcriptional programs defined during
+%           training.
+% t_hat =   [n-samples x #-genes] matrix of predicted expression values in TPM
+%           of all genes in the transcriptome.
+% z_hat =   [n-samples x #-genes] matrix of predicted expression values in log-
+%           TPM of all genes in the transcriptome. 
 
 
     t_m = T_m; clear T_m;
