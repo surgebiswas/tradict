@@ -29,7 +29,7 @@ Training a Tradict model requires 4 inputs:
 Using Tradict for prediction requires 3 inputs:
 
 1. A #-samples x #-markers expression matrix where entry (i,j) is the total number of measured transcripts for marker j in sample i.
-2. A #-samples x 1 vector of sequencing depths. 
+2. A #-samples x 1 vector of sequencing depths (in millions of reads). 
 3. A model object obtained from `tradict_train`.
 
 `tradict_predict` outputs a #-samples x #-transcriptional-programs matrix of expression values of the transcriptional programs defined during training. Additionally, `tradict_predict` outputs two #-samples x #-total-genes matrices of the predicted expression values, in transcripts per million (TPM) and log-TPM, of all genes in the transcriptome.
