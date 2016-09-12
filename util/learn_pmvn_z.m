@@ -33,7 +33,8 @@ while delta > 1e-6
         
     end
     old_o = o;
-    o = objective(t, z, offset, mu, Sigma);
+    ofun = @(x) objective(t, x, offset, mu, Sigma);
+    o = ofun(z);
     delta = o - old_o;
     %fprintf('Objective: %0.6f\n', o);
 end

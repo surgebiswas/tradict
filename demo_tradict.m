@@ -80,7 +80,7 @@ t_test = ytest.*repmat(o_test, 1, size(ytest,2) );
 %   values for all genes.
 %
 % s_hat and z_hat can now be used for downstream analyses. 
-[ s_hat, ~, z_hat ] = tradict_predict( t_test(:,model.S), o_test, model );
+pred = tradict_predict( t_test(:,model.S), o_test, model );
 
 
 %%% 4. EVALUATE PERFORMANCE
