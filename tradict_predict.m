@@ -73,25 +73,32 @@ function pred = tradict_predict( T_m, o, model, varargin )
             
             
             pw_smpl = mvnrnd(mu_gs, s_cond_var);
-            gene_smpl = mvnrnd(mu_gene, z_cond_var);
+            gene_smpl = mu_gene + repmat(sqrt(z_cond_var), size(zm_smpl{i},1), 1).*randn(size(mu_gene));
               
             % tr programs
-            for j = 1 : size(pw_smpl,2)
-                f = ksdensity(pw_smpl(:,j), [left_pctile, right_pctile], ...
-                    'function', 'icdf');
-                
-                s_left(i,j) = f(1);
-                s_right(i,j) = f(2);
-            end
+            p = prctile(pw_smpl, 100*[left_pctile, right_pctile]);
+            s_left(i,:) = p(1,:);
+            s_right(i,:) = p(2,:);
+%             for j = 1 : size(pw_smpl,2)
+%                 f = ksdensity(pw_smpl(:,j), [left_pctile, right_pctile], ...
+%                     'function', 'icdf');
+%                 
+%                 s_left(i,j) = f(1);
+%                 s_right(i,j) = f(2);
+%             end
             
             % genes
-            for j = 1 : size(gene_smpl,2)
-                f = ksdensity(gene_smpl(:,j), [left_pctile, right_pctile], ...
-                    'function', 'icdf');
-                
-                z_left(i,j) = f(1);
-                z_right(i,j) = f(2);
-            end
+            p = prctile(gene_smpl, 100*[left_pctile, right_pctile]);
+            z_left(i,:) = p(1,:);
+            z_right(i,:) = p(2,:);
+            
+%             for j = 1 : size(gene_smpl,2)
+%                 f = ksdensity(gene_smpl(:,j), [left_pctile, right_pctile], ...
+%                     'function', 'icdf');
+%                 
+%                 z_left(i,j) = f(1);
+%                 z_right(i,j) = f(2);
+%             end
         end
         
         pred.programs.cred_left = s_left;
@@ -102,28 +109,7 @@ function pred = tradict_predict( T_m, o, model, varargin )
     end
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-%     % Predict TPM for all remaining genes.
-%     mu_j = model.fit.genes.mu;
-%     sig_j = diag(model.fit.genes.cov)';
-%     sig_mj = model.fit.genes.cross_cov;
-%     
-%     H = (Sigma_m \ sig_mj);
-%     mu_j_given_m = repmat(mu_j, size(z_m,1), 1) + ...
-%         bsxfun(@minus, z_m, mu_m)*H;
-%     sig_j_given_m = sig_j - sum(sig_mj .* H);
-%     
-%     z_hat = mu_j_given_m;
-%     t_hat = exp( mu_j_given_m + 0.5*repmat(sig_j_given_m, size(t_m,1), 1) );
-%     
-    
+   
     
     % Accessory functions
     function [gh, gcv] = predict_gene_expression(z_m, model, sil)
@@ -138,11 +124,13 @@ function pred = tradict_predict( T_m, o, model, varargin )
         
         
         % conditional covariance
-        % Note that this computation will induce minor computational errors
-        % within machine precision causing the matrix to be slightly
-        % asymmetric. We therefore symmetrize it. 
-        gcv = model.fit.genes.cov - sig_mg'*sil;
-        gcv = (gcv + gcv')/2;
+        % Note that computing and sampling using the full covariance matrix
+        % is too demanding. Importantly, we don't need to because we've
+        % assumed that the cross covariance relationships between markers
+        % and genes is adequately captured within the markers x genes cross
+        % covariance matrix. Thus we only need to store the conditional
+        % variance of each gene.
+        gcv = model.fit.genes.var - sum(sig_mg.*sil);
         
         
     end

@@ -5,7 +5,7 @@ if verbose
     fprintf('Tuning acceptance rate of proposal distribution using a randomly chosen observation ... \n');
 end
 
-TARGET_ACCEPTANCE_RATE = 0.234;
+TARGET_ACCEPTANCE_RATE = 0.5;
 eidx = randsample(size(z_m,1),1);
 pwmin = -3.5; pwmax = -1;
 propwidth = logspace(pwmin,pwmax,50);

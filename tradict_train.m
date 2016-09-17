@@ -91,7 +91,7 @@ function model = tradict_train( T, o, tids, sets, varargin )
     
     % Learn mean and cross covariances for all genes
     model.fit.genes.mu = mean(zlag);
-    model.fit.genes.cov = cov(zlag);
+    model.fit.genes.var = var(zlag);
     model.fit.genes.cross_cov = cross_cov(model.fit.markers.z, zlag);
     
     function c = cross_cov(x,y)
