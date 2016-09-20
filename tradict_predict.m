@@ -25,7 +25,7 @@ function pred = tradict_predict( T_m, o, model, varargin )
     t_m = T_m; clear T_m;
     
     ldiag = setParam(varargin, 'learn_latent_diag', false);
-    calc_credible_intervals = setParam(varargin, 'calc_credible_intervals', true);
+    sample_posterior = setParam(varargin, 'sample_posterior', true);
     cred_interval_size = 0.95;
 
     % First learn the marker latent abundances.
@@ -49,9 +49,9 @@ function pred = tradict_predict( T_m, o, model, varargin )
     
     
     
-    if calc_credible_intervals
-        left_pctile = (1 - cred_interval_size)/2;
-        right_pctile = 1 - left_pctile;
+    if sample_posterior
+        %left_pctile = (1 - cred_interval_size)/2;
+        %right_pctile = 1 - left_pctile;
         
         % First draw from the posterior of z_m
         zm_smpl = sample_marker_latent_abundances(t_m, z_m, o, ...
@@ -59,10 +59,12 @@ function pred = tradict_predict( T_m, o, model, varargin )
         
         % Given these draws from the posterior of z_m, we can sample for
         % the transcriptional program and gene expression values.
-        s_left = zeros(size(s_hat));
-        s_right = s_left;
-        z_left = zeros(size(z_hat));
-        z_right = z_left;
+%         s_left = zeros(size(s_hat));
+%         s_right = s_left;
+%         z_left = zeros(size(z_hat));
+%         z_right = z_left;
+        pw_smpl = cell(length(zm_smpl),1);
+        gene_smpl = cell(length(zm_smpl),1);
         for i = 1 : length(zm_smpl)
             
             mu_gs = repmat(model.fit.geneset.mu, size(zm_smpl{i},1), 1) + ...
@@ -72,39 +74,24 @@ function pred = tradict_predict( T_m, o, model, varargin )
                 bsxfun(@minus, zm_smpl{i}, model.fit.markers.mu)*SIL_gene;
             
             
-            pw_smpl = mvnrnd(mu_gs, s_cond_var);
-            gene_smpl = mu_gene + repmat(sqrt(z_cond_var), size(zm_smpl{i},1), 1).*randn(size(mu_gene));
+            pw_smpl{i} = mvnrnd(mu_gs, s_cond_var);
+            gene_smpl{i} = mu_gene + repmat(sqrt(z_cond_var), size(zm_smpl{i},1), 1).*randn(size(mu_gene));
               
-            % tr programs
-            p = prctile(pw_smpl, 100*[left_pctile, right_pctile]);
-            s_left(i,:) = p(1,:);
-            s_right(i,:) = p(2,:);
-%             for j = 1 : size(pw_smpl,2)
-%                 f = ksdensity(pw_smpl(:,j), [left_pctile, right_pctile], ...
-%                     'function', 'icdf');
-%                 
-%                 s_left(i,j) = f(1);
-%                 s_right(i,j) = f(2);
-%             end
+%             % tr programs
+%             p = prctile(pw_smpl, 100*[left_pctile, right_pctile]);
+%             s_left(i,:) = p(1,:);
+%             s_right(i,:) = p(2,:);
+% 
+%             
+%             % genes
+%             p = prctile(gene_smpl, 100*[left_pctile, right_pctile]);
+%             z_left(i,:) = p(1,:);
+%             z_right(i,:) = p(2,:);
             
-            % genes
-            p = prctile(gene_smpl, 100*[left_pctile, right_pctile]);
-            z_left(i,:) = p(1,:);
-            z_right(i,:) = p(2,:);
-            
-%             for j = 1 : size(gene_smpl,2)
-%                 f = ksdensity(gene_smpl(:,j), [left_pctile, right_pctile], ...
-%                     'function', 'icdf');
-%                 
-%                 z_left(i,j) = f(1);
-%                 z_right(i,j) = f(2);
-%             end
         end
         
-        pred.programs.cred_left = s_left;
-        pred.programs.cred_right = s_right;
-        pred.genes.cred_left = z_left;
-        pred.genes.cred_right = z_right;
+        pred.programs.post_smpl = pw_smpl;
+        pred.genes.post_smpl = gene_smpl;
         
     end
     
