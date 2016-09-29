@@ -70,16 +70,24 @@ function model = tradict_train( T, o, tids, sets, varargin )
     topN = setParam(varargin, 'topN', false);
 
     % Perform lag
+    tic;
     [zlag, model.lag_priors] = lag_dataset(t, o);
+    model.timing.lag = toc;
     
     % perform the endcoding
+    tic;
     meanexp = mean(zlag);
     [sY, model.train_mu, model.train_sig] = standardize(zlag);
     model = geneset_cluster( sY, tids, sets, 'stats', model );
+    model.timing.cluster = toc;
+    
+    tic;
     model = geneset_encode(sY, nmarkers, model, 'expression_delta', expdelta, 'mean_expression', meanexp, 'topN', topN);
     markers = model.S;
+    model.timing.somp = toc;
     
     % Learn z_m, \mu^{(m)}, and \Sigma^{(m)}
+    tic;
     [model.fit.markers.z, model.fit.markers.mu, model.fit.markers.Sigma] = ...
             learn_pmvn(t(:,markers), o, zlag(:,markers));
     zlag(:,markers) = model.fit.markers.z; % update lag estimates for markers.
@@ -93,6 +101,7 @@ function model = tradict_train( T, o, tids, sets, varargin )
     model.fit.genes.mu = mean(zlag);
     model.fit.genes.var = var(zlag);
     model.fit.genes.cross_cov = cross_cov(model.fit.markers.z, zlag);
+    model.timing.pmvn = toc;
     
     function c = cross_cov(x,y)
         c = bsxfun(@minus,x,mean(x))'*bsxfun(@minus,y,mean(y))/(size(x,1)-1);
